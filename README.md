@@ -13,6 +13,28 @@ The following datasets are contained within this repository:
 | **faults_df**           | simple features dataframe for faultlines which lie within bounding box *xmin=92,xmax=143,ymin=-12,ymax=10* or 300km from Indonesia                                                                        |
 | **nearby_countries_df** | simple features dataframe of other countries which lie within the same bounding box                                                                                                                       |
 
+### Descripton of datasets
+
+#### quakes_df
+
+67,268…
+
+#### provinces_df
+
+33…
+
+#### counties_df
+
+349…
+
+#### faults_df
+
+263…
+
+#### nearby_countries_df
+
+5…
+
 ### Preparation of datasets
 
 They have been assembled as follows:
