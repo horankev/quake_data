@@ -100,19 +100,6 @@ nearby_countries_df <- rbind(malaysia,thailand,philippines,papuanewguinea,timorl
 
 ```{r, message=FALSE}
 
-# indonesia <- ne_states(country="indonesia", returnclass = "sf") |>
-#   st_cast("POLYGON") |>
-#   st_set_crs("WGS84") |>
-#   st_transform(23830)
-# indonesia$id <- 1:nrow(indonesia)
-# 
-# provinces <- indonesia |>
-#   group_by(name) |>
-#   summarise() |>
-#   st_as_sf() |> 
-#   rename(province = name)
-
-
 # indonesia level 1 and 2 administrative boundaries from https://bitbucket.org/rifani/geojson-political-indonesia/src/master/
 
 indonesia2 <- st_read(
@@ -145,19 +132,19 @@ counties <- indonesia2 |>
 # quake data 1985-2023 downloaded from: https://earthquake.usgs.gov/earthquakes/search/
 # quakes with minimum magnitude 2.5
 
-quakes_1985_1992 <- read.csv(here("data","query_1985_1992.csv")) |> 
+quakes_1985_1992 <- read.csv(here("rawdata","query_1985_1992.csv")) |> 
   st_as_sf(coords = c("longitude","latitude"))
 
-quakes_1993_1999 <- read.csv(here("data","query_1993_1999.csv")) |> 
+quakes_1993_1999 <- read.csv(here("rawdata","query_1993_1999.csv")) |> 
   st_as_sf(coords = c("longitude","latitude"))
 
-quakes_2000_2007 <- read.csv(here("data","query_2000_2007.csv")) |> 
+quakes_2000_2007 <- read.csv(here("rawdata","query_2000_2007.csv")) |> 
   st_as_sf(coords = c("longitude","latitude"))
 
-quakes_2008_2015 <- read.csv(here("data","query_2008_2015.csv")) |> 
+quakes_2008_2015 <- read.csv(here("rawdata","query_2008_2015.csv")) |> 
   st_as_sf(coords = c("longitude","latitude"))
 
-quakes_2016_2023 <- read.csv(here("data","query_2016_2023.csv")) |> 
+quakes_2016_2023 <- read.csv(here("rawdata","query_2016_2023.csv")) |> 
   st_as_sf(coords = c("longitude","latitude"))
 
 quakes <- rbind(quakes_1985_1992,quakes_1993_1999,quakes_2000_2007,quakes_2008_2015,quakes_2016_2023) |>
@@ -187,7 +174,7 @@ indonesia_outline <- indonesia2 |> summarise()
 indonesia_buffer_outline <- indonesia_outline |> st_buffer(300000)
 
 # faultlines from: https://github.com/cossatot/gem-global-active-faults/tree/master/shapefile
-faults <-st_read(here("data","gem_active_faults_harmonized.shp"),
+faults <-st_read(here("rawdata","gem_active_faults_harmonized.shp"),
                 quiet=TRUE) |> 
   st_crop(xmin=92,xmax=143,ymin=-12,ymax=8) |>
   st_set_crs("WGS84") |>
@@ -566,4 +553,17 @@ ggarrange(
 )
 
 ```
+
+## Save datasets
+
+```{r}
+
+# saveRDS(quakes_df, here("datasets","quakes_df.rds"))
+# saveRDS(provinces_df, here("datasets","provinces_df.rds"))
+# saveRDS(counties_df, here("datasets","counties_df.rds"))
+# saveRDS(faults_df, here("datasets","faults_df.rds"))
+# saveRDS(nearby_countries_df, here("datasets","nearby_countries_df.rds"))
+
+```
+
 
