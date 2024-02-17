@@ -74,6 +74,7 @@ timorleste <- ne_countries(country="east timor",returnclass = "sf") |>
 nearby_countries_df <- rbind(malaysia,thailand,philippines,papuanewguinea,timorleste) |> 
   data.frame() |> 
   select(name, geometry) |> 
+  mutate(name = factor(name)) |> 
   st_as_sf()
 
 ```
@@ -165,7 +166,8 @@ faults <-st_read(here("rawdata","gem_active_faults_harmonized.shp"),
   st_transform(23830)
 
 faults_df <- faults[st_intersects(indonesia_buffer_outline, faults) |> unlist(),] |> 
-  select(catalog_id, name, net_slip_r,slip_type )
+  select(catalog_id, name, net_slip_r,slip_type ) |> 
+  mutate(slip_type = factor(slip_type))
 
 ```
 
@@ -309,10 +311,10 @@ counties_df <- left_join(counties, temp_df |> st_drop_geometry(), by="county_id"
 
 ```{r}
 
-# saveRDS(quakes_df, here("datasets","quakes_df.rds"))
-# saveRDS(provinces_df, here("datasets","provinces_df.rds"))
-# saveRDS(counties_df, here("datasets","counties_df.rds"))
-# saveRDS(faults_df, here("datasets","faults_df.rds"))
-# saveRDS(nearby_countries_df, here("datasets","nearby_countries_df.rds"))
+saveRDS(quakes_df, here("datasets","quakes_df.rds"))
+saveRDS(provinces_df, here("datasets","provinces_df.rds"))
+saveRDS(counties_df, here("datasets","counties_df.rds"))
+saveRDS(faults_df, here("datasets","faults_df.rds"))
+saveRDS(nearby_countries_df, here("datasets","nearby_countries_df.rds"))
 
 ```

@@ -102,7 +102,7 @@ nearby_countries_df <- rbind(malaysia,thailand,philippines,papuanewguinea,timorl
 
 # indonesia level 1 and 2 administrative boundaries from https://bitbucket.org/rifani/geojson-political-indonesia/src/master/
 
-indonesia2 <- st_read(
+indonesia <- st_read(
   "https://bitbucket.org/rifani/geojson-political-indonesia/raw/0e89dcb0b0454c5afffd414fd0cd0c25f1688d10/IDN_adm_2_kabkota.json", 
   quiet=TRUE) |> 
   st_set_crs("WGS84") |> 
@@ -110,20 +110,24 @@ indonesia2 <- st_read(
   filter(!is.na(HASC_2)) |> 
   ms_simplify(keep = 0.6)
 
-provinces <- indonesia2 |> 
+provinces <- indonesia |> 
   ms_dissolve("ID_1",copy_fields = "NAME_1") |> 
   ms_simplify() |> 
   rename(province_id = ID_1,
-         province = NAME_1)
+         province = NAME_1) |> 
+  mutate(province = factor(province)) |> 
+  select(province, province_id, everything())
 
-counties <- indonesia2 |> 
+counties <- indonesia |> 
   ms_dissolve("ID_2") |> 
-  left_join(indonesia2 |> select(ID_2,NAME_2,ID_1,NAME_1,ENGTYPE_2) |> st_drop_geometry()) |> 
+  left_join(indonesia |> select(ID_2,NAME_2,ID_1,NAME_1,ENGTYPE_2) |> st_drop_geometry()) |> 
   rename(county_id = ID_2,
          county = NAME_2,
          province_id = ID_1,
          province = NAME_1,
-         county_type = ENGTYPE_2)
+         county_type = ENGTYPE_2) |> 
+  mutate(province = factor(province),
+         county = factor(county))
 
 ```
 
@@ -170,7 +174,7 @@ quakes <- rbind(quakes_1985_1992,quakes_1993_1999,quakes_2000_2007,quakes_2008_2
 
 ```{r}
 
-indonesia_outline <- indonesia2 |> summarise()
+indonesia_outline <- indonesia |> summarise()
 indonesia_buffer_outline <- indonesia_outline |> st_buffer(300000)
 
 # faultlines from: https://github.com/cossatot/gem-global-active-faults/tree/master/shapefile
