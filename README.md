@@ -1,7 +1,7 @@
 
-## Indonesia earthquakes datasets
+# Indonesia earthquakes datasets
 
-### Summary
+## Summary
 
 The following datasets are contained within this repository:
 
@@ -13,9 +13,9 @@ The following datasets are contained within this repository:
 | **faults_df**           | simple features dataframe for faultlines which lie within bounding box *xmin=92,xmax=143,ymin=-12,ymax=10* or 300km from Indonesia                                                                        |
 | **nearby_countries_df** | simple features dataframe of other countries which lie within the same bounding box                                                                                                                       |
 
-### Descripton of datasets
+## Descripton of datasets
 
-#### quakes_df
+### quakes_df
 
 | attribute        | type      | description                                                                                                                              |
 |------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------|
@@ -35,7 +35,7 @@ The following datasets are contained within this repository:
 | slip_type        | factor    | faulting type of closest faultline from faults_df dataframe                                                                              |
 | geometry         | sfc_POINT | points of earthquake epicentres                                                                                                          |
 
-#### provinces_df
+### provinces_df
 
 | attribute           | type         | description                                                                                                         |
 |---------------------|--------------|---------------------------------------------------------------------------------------------------------------------|
@@ -54,7 +54,7 @@ The following datasets are contained within this repository:
 | fault_concentration | numeric      | area of faultlines within province per square kilometre                                                             |
 | geometry            | sfc_GEOMETRY | polygons of provinces                                                                                               |
 
-#### counties_df
+### counties_df
 
 | attribute           | type         | description                                                                                                                              |
 |---------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------|
@@ -76,7 +76,15 @@ The following datasets are contained within this repository:
 | fault_concentration | numeric      | area of faultlines within county per square kilometre                                                                                    |
 | geometry            | sfc_GEOMETRY | polygons of counties                                                                                                                     |
 
-#### faults_df
+### faults_df
+
+| attribute  | type      | description               |
+|------------|-----------|---------------------------|
+| catalog_id | character | gloabal fault ID          |
+| catalog_na | character | global fault name         |
+| name       | character | name of fault zone        |
+| slip_type  | factor    | type of faulting          |
+| geometry   | sfg list  | linestrings of faultlines |
 
 Taken from the [GEM Foundation’s](https://www.globalquakemodel.org/)
 Global Active Faults Database (GEM GAF-DB), as extracted by [Richard
@@ -88,15 +96,7 @@ pp. 160–180, <doi:10.1177/8755293020944182>.
 
 <https://journals.sagepub.com/doi/abs/10.1177/8755293020944182>
 
-| attribute  | type      | description               |
-|------------|-----------|---------------------------|
-| catalog_id | character | gloabal fault ID          |
-| catalog_na | character | global fault name         |
-| name       | character | name of fault zone        |
-| slip_type  | factor    | type of faulting          |
-| geometry   | sfg list  | linestrings of faultlines |
-
-#### nearby_countries_df
+### nearby_countries_df
 
 For the purposes of context when mapping, the polygons outlines of
 neighbouring countries within the bounding-box are provided:
@@ -106,7 +106,7 @@ neighbouring countries within the bounding-box are provided:
 | name      | factor   | name of nearby country |
 | geometry  | sfg list | polygons of countries  |
 
-### Preparation of datasets
+## Preparation of datasets
 
 The code for the assembly of these datasets is available in the file
 **codeprep.Rmd**.
@@ -212,7 +212,7 @@ quakes <- rbind(quakes_1985_1992,quakes_1993_1999,quakes_2000_2007,quakes_2008_2
 # index for dataframe: https://earthquake.usgs.gov/data/comcat/index.php#1
 ```
 
-#### Faultlines
+### Faultlines
 
 ``` r
 
@@ -250,7 +250,7 @@ ggplot() +
 
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-##### Faultline concentration
+#### Faultline concentration
 
 Set a buffer around the faultlines of 10km.
 
@@ -272,7 +272,7 @@ ggplot() +
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-###### by province
+##### by province
 
 Ratio of this area to province area.
 
@@ -303,7 +303,7 @@ ggplot() +
 
 ![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-###### by county
+##### by county
 
 And for county:
 
@@ -340,7 +340,7 @@ ggplot() +
 
 ![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-#### Earthquakes
+### Earthquakes
 
 ``` r
 
@@ -423,7 +423,7 @@ are potentially “damaging”, i.e. with magnitude \> 5.5. There have been
 2,513 of these from 1985-2023 and their locations are shown below,
 coloured and sized by category.
 
-##### Earthquake count
+#### Earthquake count
 
 Next we want to count the number of earthquakes with epicentre within
 each province or county. There were 11,153 such events, with 413 having
@@ -503,7 +503,7 @@ ggarrange(
 
 ![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
-###### by province
+##### by province
 
 Then we could add these up to get the following counts of earthquakes
 \>5.5 in magnitude within each province since 1985:
@@ -569,7 +569,7 @@ ggarrange(
 
 ![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
-###### by county
+##### by county
 
 ``` r
 
@@ -631,7 +631,7 @@ ggarrange(
 
 ![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
-## Save datasets
+# Save datasets
 
 ``` r
 
