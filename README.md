@@ -1,16 +1,17 @@
 
 # Indonesia earthquakes datasets
 
-These datasets contain information about earthquakes in Indonesia. All
-five datasets have spatial attributes and can be mapped. **quakes_df**
-contains records for individual earthquakes. **provinces_df** contains
-records for each province, including aggregations of eathquake counts
-and densities. **counties_df** contains the same for lower-level
-administrative boundaries. **faults_df** contains linestrings of the
-faultlines in the area. Finally, **nearby_countries_df** is a small
-spatial dataset containing polygons for the five nearby or bordering
-countries which are not part of Indonesia. These can be used when
-mapping to give more context to the map.
+These datasets contain spatio-temporal information about earthquakes in
+Indonesia. All five datasets are `sf` dataframes which can be mapped.
+**quakes_df** contains records for individual earthquakes.
+**provinces_df** contains records for each province, including
+aggregations of eathquake counts and densities. **counties_df** contains
+the same for lower-level administrative boundaries. **faults_df**
+contains linestrings of the faultlines in the area. Finally,
+**nearby_countries_df** is a small spatial dataset containing polygons
+for the five nearby or bordering countries which are not part of
+Indonesia. These can be used when mapping to give more context to the
+map.
 
 ## Summary
 
@@ -238,11 +239,3 @@ the following:
 Or by year:
 
 ![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
-
-Day of the month shows no pattern (as simple logic wouuld suggest!) :
-
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
-
-But is there a monthly pattern?
-
-![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->

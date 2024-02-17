@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 
 # Indonesia earthquakes datasets
 
-These datasets contain information about earthquakes in Indonesia. All five datasets have spatial attributes and can be mapped. **quakes_df** contains records for individual earthquakes. **provinces_df** contains records for each province, including aggregations of eathquake counts and densities. **counties_df** contains the same for lower-level administrative boundaries. **faults_df** contains linestrings of the faultlines in the area. Finally, **nearby_countries_df** is a small spatial dataset containing polygons for the five nearby or bordering countries which are not part of Indonesia. These can be used when mapping to give more context to the map.
+These datasets contain spatio-temporal information about earthquakes in Indonesia. All five datasets are `sf` dataframes which can be mapped. **quakes_df** contains records for individual earthquakes. **provinces_df** contains records for each province, including aggregations of eathquake counts and densities. **counties_df** contains the same for lower-level administrative boundaries. **faults_df** contains linestrings of the faultlines in the area. Finally, **nearby_countries_df** is a small spatial dataset containing polygons for the five nearby or bordering countries which are not part of Indonesia. These can be used when mapping to give more context to the map.
 
 ## Summary
 
@@ -510,51 +510,8 @@ ggplot() +
 
 ```
 
-Day of the month shows no pattern (as simple logic wouuld suggest!) :
 
-```{r, fig.width=12, fig.height=5}
 
-ggplot() +
-    stat_density_2d(data = quakes_df, 
-                    mapping = aes(x = purrr::map_dbl(geometry, ~.[1]),
-                                  y = purrr::map_dbl(geometry, ~.[2]),
-                                  fill = stat(density)),
-                    geom = 'tile',
-                    contour = FALSE,
-                    alpha = 0.8) +
-    geom_sf(data = provinces_df, fill = NA) + 
-    scale_fill_viridis_c(option = 'magma', direction = -1) +
-    coord_sf(datum=NA) + 
-  labs(title = "earthquake occurrence",
-       subtitle = "by day of month") + 
-    theme(axis.title = element_blank(),
-          axis.ticks = element_blank()) + 
-  facet_wrap(~hour(hms), ncol = 5)
-
-```
-
-But is there a monthly pattern?
-
-```{r, fig.width=12, fig.height=5}
-
-ggplot() +
-    stat_density_2d(data = quakes_df, 
-                    mapping = aes(x = purrr::map_dbl(geometry, ~.[1]),
-                                  y = purrr::map_dbl(geometry, ~.[2]),
-                                  fill = stat(density)),
-                    geom = 'tile',
-                    contour = FALSE,
-                    alpha = 0.8) +
-    geom_sf(data = provinces_df, fill = NA) + 
-    scale_fill_viridis_c(option = 'magma', direction = -1) +
-    coord_sf(datum=NA) + 
-  labs(title = "earthquake occurrence",
-       subtitle = "by month") + 
-    theme(axis.title = element_blank(),
-          axis.ticks = element_blank()) + 
-  facet_wrap(~month(ymd), ncol = 4)
-
-```
 
 
 
