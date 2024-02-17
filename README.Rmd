@@ -190,6 +190,7 @@ ggplot() +
   geom_sf(data=faults_df, colour="darkgreen", linewidth=0.3) +
   guides(fill="none") + 
   annotation_scale() + 
+  labs(title = "faultlines") + 
   theme_bw() + 
   theme(panel.background = element_rect(fill = "#ECF6F7", color = "black"),
         panel.grid.major = element_line(colour = "white", linewidth=2))
@@ -209,6 +210,7 @@ ggplot() +
   scale_colour_brewer(palette = "Paired", direction = -1) + 
   guides(fill="none") + 
   annotation_scale() +
+  labs(title = "faultlines by type") + 
   coord_sf(datum=NA) + 
   theme(axis.title = element_blank(),
         axis.ticks = element_blank())
@@ -217,7 +219,9 @@ ggplot() +
 
 #### faultline concentration
 
-To get an interpretable measure of faultline concentration in any area, they are transform from linestrings to polygons by setting a buffer  of 10km around them, as shown below. This is now in units of kilometres squared and be compared with the area of administrative units to give concentrations.
+To get an interpretable measure of faultline concentration in any area for use in **provinces_df** and **counties_df**, they are transformed from linestrings to polygons by setting a buffer  of 10km around them, as shown below. This is now in units of kilometres squared and be compared with the area of administrative units to give concentrations.
+
+We can subsequently measure what proportion of any administrative unit is covered by these buffered faultlines.
 
 ```{r, fig.width=12, fig.height=5}
 
@@ -231,6 +235,7 @@ ggplot() +
   geom_sf(data=faults_df, colour="yellow", linewidth=0.4) +
   annotation_scale() +
   coord_sf(datum=NA) + 
+  labs(title = "buffered faultlines") + 
   theme(axis.title = element_blank(),
         axis.ticks = element_blank())
 
@@ -290,6 +295,7 @@ ggplot() +
   geom_sf(data=provinces_df, fill="antiquewhite", linewidth=0.5,colour="black") + 
   geom_sf(data=quakes_sample, size=0.05, shape=3, colour="red3") +
   geom_sf(data=faults_df, colour="darkgreen", linetype="dashed", linewidth=1) +
+  labs(title = "sample of 20,000 earthquakes") + 
   annotation_scale() +
   coord_sf(datum=NA)
 
@@ -309,7 +315,7 @@ ggarrange(
   geom_sf(data=counties_df, fill=NA, colour="grey", linewidth=0.1) + 
   geom_sf(data=quakes_df |> filter(magfact != "S") |> filter(province != "undersea"), 
           colour="red", shape=3, size=5) +
-    labs(title = "within province / county") + 
+    labs(title = "all earthquakes: within province / county") + 
   annotation_scale() +
   coord_sf(datum=NA),
   
@@ -319,7 +325,7 @@ ggarrange(
   geom_sf(data=counties_df, fill=NA, colour="grey", linewidth=0.1) + 
   geom_sf(data=quakes_df |> filter(magfact != "S") |> filter(province == "undersea"), 
           colour="blue", shape=3, size=5) +
-    labs(title = "undersea") + 
+    labs(title = "all earthquakes: undersea") + 
   annotation_scale() +
   coord_sf(datum=NA),
   
@@ -396,7 +402,9 @@ ggarrange(
   geom_sf(data=nearby_countries_df, fill="gray90", colour="black") +
   geom_sf(data=provinces_df, aes(fill=quake_mlxl_total)) +
   scale_fill_distiller(palette = "YlOrRd", direction = 1) + 
-  labs(fill="quake_mlxl_total") + 
+  labs(fill="quake_mlxl_total",
+       title = "count of earthquakes (mag > 5.5)",
+       subtitle = "by province") + 
   annotation_scale() +
   coord_sf(datum=NA),
   
@@ -404,7 +412,9 @@ ggarrange(
   geom_sf(data=nearby_countries_df, fill="gray90", colour="black") +
   geom_sf(data=provinces_df, aes(fill=quake_mlxl_density)) +
   scale_fill_distiller(palette = "YlOrRd", direction = 1) + 
-  labs(fill="quake_mlxl_density") + 
+  labs(fill="quake_mlxl_density",
+       title = "density of earthquakes (mag > 5.5)",
+       subtitle = "by province") + 
   annotation_scale() +
   coord_sf(datum=NA) + 
   theme(axis.title = element_blank(),
@@ -427,7 +437,9 @@ ggarrange(
   geom_sf(data=indonesia_outline, fill=NA, colour="black", linewidth=0.6) +
   scale_fill_distiller(palette = "YlOrRd", direction = 1) + 
   scale_colour_distiller(palette = "YlOrRd", direction = 1) + 
-  labs(fill="quake_mlxl_total") + 
+  labs(fill="quake_mlxl_total",
+       title = "count of earthquakes (mag > 5.5)",
+       subtitle = "by county") + 
   annotation_scale() +
   coord_sf(datum=NA),
   
@@ -437,7 +449,9 @@ ggarrange(
   geom_sf(data=indonesia_outline, fill=NA, colour="black", linewidth=0.6) +
   scale_fill_distiller(palette = "YlOrRd", direction = 1) + 
   scale_colour_distiller(palette = "YlOrRd", direction = 1) + 
-  labs(fill="quake_mlxl_density") + 
+  labs(fill="quake_mlxl_density",
+       title = "density of earthquakes (mag > 5.5)",
+       subtitle = "by county") + 
   annotation_scale() +
   coord_sf(datum=NA) + 
   theme(axis.title = element_blank(),

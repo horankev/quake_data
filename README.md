@@ -143,11 +143,14 @@ The category of fault is an attribute of **faults_df**:
 
 #### faultline concentration
 
-To get an interpretable measure of faultline concentration in any area,
-they are transform from linestrings to polygons by setting a buffer of
-10km around them, as shown below. This is now in units of kilometres
-squared and be compared with the area of administrative units to give
-concentrations.
+To get an interpretable measure of faultline concentration in any area
+for use in **provinces_df** and **counties_df**, they are transformed
+from linestrings to polygons by setting a buffer of 10km around them, as
+shown below. This is now in units of kilometres squared and be compared
+with the area of administrative units to give concentrations.
+
+We can subsequently measure what proportion of any administrative unit
+is covered by these buffered faultlines.
 
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
