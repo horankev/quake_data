@@ -1,0 +1,318 @@
+---
+title: "Code preparation"
+output: html_document
+date: "2024-02-17"
+---
+
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, 
+  message = FALSE, 
+  warning = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+```
+
+# Indonesia earthquakes datasets
+
+
+```{r, echo=FALSE}
+
+## Data and packages
+
+# Read in data and necessary packages.
+# required packages
+packages <- c(
+  "tidyverse",
+  "sf",
+  "here",
+  "rnaturalearth",
+  "rmapshaper"
+)
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE, quietly = TRUE))
+
+```
+
+```{r}
+
+# geographic polygons from rnaturalearth
+
+malaysia <- ne_countries(country="malaysia",returnclass = "sf") |> 
+  st_set_crs("WGS84") |>
+  st_crop(xmin=92,xmax=143,ymin=-12,ymax=6) |> 
+  st_transform(23830)
+thailand <- ne_countries(country="thailand",returnclass = "sf") |> 
+  st_set_crs("WGS84") |>
+  st_crop(xmin=92,xmax=143,ymin=-12,ymax=6) |> 
+  st_transform(23830)
+philippines <- ne_countries(country="philippines",returnclass = "sf") |> 
+  st_set_crs("WGS84") |>
+  st_crop(xmin=92,xmax=143,ymin=-12,ymax=6) |> 
+  st_transform(23830)
+papuanewguinea <- ne_countries(country="papua new guinea",returnclass = "sf") |> 
+  st_set_crs("WGS84") |>
+  st_crop(xmin=92,xmax=143,ymin=-12,ymax=6) |> 
+  st_transform(23830)
+timorleste <- ne_countries(country="east timor",returnclass = "sf") |> 
+  st_set_crs("WGS84") |>
+  st_crop(xmin=92,xmax=143,ymin=-12,ymax=6) |> 
+  st_transform(23830)
+
+nearby_countries_df <- rbind(malaysia,thailand,philippines,papuanewguinea,timorleste) |> 
+  data.frame() |> 
+  select(name, geometry) |> 
+  st_as_sf()
+
+```
+
+```{r}
+
+# indonesia level 1 and 2 administrative boundaries from https://bitbucket.org/rifani/geojson-political-indonesia/src/master/
+
+indonesia <- st_read(
+  "https://bitbucket.org/rifani/geojson-political-indonesia/raw/0e89dcb0b0454c5afffd414fd0cd0c25f1688d10/IDN_adm_2_kabkota.json", 
+  quiet=TRUE) |> 
+  st_set_crs("WGS84") |> 
+  st_transform(23830) |> 
+  filter(!is.na(HASC_2)) |> 
+  ms_simplify(keep = 0.6)
+
+provinces <- indonesia |> 
+  ms_dissolve("ID_1",copy_fields = "NAME_1") |> 
+  ms_simplify() |> 
+  rename(province_id = ID_1,
+         province = NAME_1) |> 
+  mutate(province = factor(province)) |> 
+  select(province, province_id, everything())
+
+counties <- indonesia |> 
+  ms_dissolve("ID_2") |> 
+  left_join(indonesia |> select(ID_2,NAME_2,ID_1,NAME_1,ENGTYPE_2) |> st_drop_geometry()) |> 
+  rename(county_id = ID_2,
+         county = NAME_2,
+         province_id = ID_1,
+         province = NAME_1,
+         county_type = ENGTYPE_2) |> 
+  mutate(province = factor(province),
+         county = factor(county))
+
+```
+
+```{r}
+
+# quake data 1985-2023 downloaded from: https://earthquake.usgs.gov/earthquakes/search/
+# quakes with minimum magnitude 2.5
+
+quakes_1985_1992 <- read.csv(here("rawdata","query_1985_1992.csv")) |> 
+  st_as_sf(coords = c("longitude","latitude"))
+
+quakes_1993_1999 <- read.csv(here("rawdata","query_1993_1999.csv")) |> 
+  st_as_sf(coords = c("longitude","latitude"))
+
+quakes_2000_2007 <- read.csv(here("rawdata","query_2000_2007.csv")) |> 
+  st_as_sf(coords = c("longitude","latitude"))
+
+quakes_2008_2015 <- read.csv(here("rawdata","query_2008_2015.csv")) |> 
+  st_as_sf(coords = c("longitude","latitude"))
+
+quakes_2016_2023 <- read.csv(here("rawdata","query_2016_2023.csv")) |> 
+  st_as_sf(coords = c("longitude","latitude"))
+
+quakes <- rbind(quakes_1985_1992,quakes_1993_1999,quakes_2000_2007,quakes_2008_2015,quakes_2016_2023) |>
+  data.frame() |>
+  st_as_sf() |> 
+  mutate(magfact = cut(mag,
+                   breaks = c(2.5, 5.4, 6.1, 7, 11),
+                   labels = c("S","M","L","XL")), labels=TRUE) |> 
+  st_set_crs("WGS84") |> 
+  st_crop(xmin=92,xmax=143,ymin=-12,ymax=10) |>
+  st_transform(23830) |> 
+  mutate(ymd = str_sub(time, start = 1, end = 10)) |> 
+  mutate(hms = str_sub(time, start = 12, end = 19)) |> 
+  mutate(hms = hms(hms)) |> 
+  mutate(ymd = as_datetime(ymd)) |> 
+  select(ymd,hms,mag,magfact,place,id,everything())
+
+# index for dataframe: https://earthquake.usgs.gov/data/comcat/index.php#1
+
+```
+
+### Faultlines
+
+```{r}
+
+indonesia_outline <- indonesia |> summarise()
+indonesia_buffer_outline <- indonesia_outline |> st_buffer(300000)
+
+# faultlines from: https://github.com/cossatot/gem-global-active-faults/tree/master/shapefile
+faults <-st_read(here("rawdata","gem_active_faults_harmonized.shp"),
+                quiet=TRUE) |> 
+  st_crop(xmin=92,xmax=143,ymin=-12,ymax=8) |>
+  st_set_crs("WGS84") |>
+  st_transform(23830)
+
+faults_df <- faults[st_intersects(indonesia_buffer_outline, faults) |> unlist(),] |> 
+  select(catalog_id, name, net_slip_r,slip_type )
+
+```
+
+
+```{r}
+
+faults_buf <- faults_df |> 
+  st_buffer(dist = 10000)
+
+faults_within_province <- faults_buf |> 
+  st_intersection(provinces) |> 
+  mutate(area_fault = as.numeric(st_area(geometry) / 10^6)) |> 
+  group_by(province) |> 
+  summarise(area_fault_within = sum(area_fault)) |> 
+  st_drop_geometry() |> 
+  right_join(provinces) |> 
+  st_as_sf() |> 
+  mutate(area_province = as.numeric(st_area(geometry) / 10^6)) |> 
+  mutate(area_fault_within = case_when(is.na(area_fault_within) ~ 0, 
+                                       TRUE ~ area_fault_within)) |> 
+  mutate(fault_concentration = area_fault_within / area_province)
+
+```
+
+
+```{r}
+
+faults_within_county <- faults_buf |> 
+  st_intersection(counties) |> 
+  mutate(area_fault = as.numeric(st_area(geometry) / 10^6)) |> 
+  group_by(county) |> 
+  summarise(area_fault_within = sum(area_fault)) |> 
+  st_drop_geometry() |> 
+  right_join(counties) |> 
+  st_as_sf() |> 
+  mutate(area_county = as.numeric(st_area(geometry) / 10^6)) |> 
+  mutate(area_fault_within = case_when(is.na(area_fault_within) ~ 0, 
+                                       TRUE ~ area_fault_within)) |> 
+  mutate(fault_concentration = area_fault_within / area_county)
+
+```
+
+
+```{r}
+
+quakes_land <- st_join(provinces, quakes, join = st_contains) |>
+  st_drop_geometry() |>
+  left_join(quakes) |>
+  st_as_sf() |> 
+  filter(!is.na(magfact))
+
+quakes_df <- left_join(quakes, quakes_land |> st_drop_geometry()) |> 
+  mutate(province = case_when(is.na(province) ~ "undersea",
+                              TRUE ~ province)) |> 
+  st_join(counties |> select(county, county_id), st_within) |> 
+  mutate(county = case_when(is.na(county) ~ "undersea",
+                              TRUE ~ county)) |> 
+  st_join(faults_df |> select(catalog_id, slip_type), st_nearest_feature) |> 
+  mutate(closest_fault_id = catalog_id) |> 
+  select(id,ymd,hms,mag,magfact,county,county_id,
+         province,province_id,place,time,depth,
+         closest_fault_id,slip_type,geometry) |> 
+  mutate(county = factor(county),
+         province = factor(province),
+         slip_type = factor(slip_type))
+
+quakes_sea <- quakes_df |> filter(province == "undersea")
+
+quakes_mlxl_land <- quakes_df |> 
+  filter(!magfact %in% c("S")) |> 
+  filter(province != "undersea") |> 
+  filter(!is.na(magfact))
+
+quakes_mlxl_sea <- quakes_df |> 
+  filter(!magfact %in% c("S")) |> 
+  filter(province == "undersea") |> 
+  filter(!is.na(magfact))
+
+```
+
+
+
+```{r}
+
+temp_df <- left_join(provinces, quakes_land |> st_drop_geometry()) |>
+  select(province,depth,mag,magfact) |>
+  na.omit() |>
+  st_drop_geometry() |>
+  group_by(province,magfact) |>
+  summarise(count=n()) |>
+  left_join(provinces |> select(province,geometry)) |>
+  st_as_sf() |>
+  pivot_wider(names_from = magfact,
+              values_from = count) 
+
+provinces_df <- left_join(provinces, temp_df |> st_drop_geometry()) |> 
+  mutate(S = case_when(is.na(S) ~ 0, TRUE ~ S), 
+         M = case_when(is.na(M) ~ 0, TRUE ~ M), 
+         L = case_when(is.na(L) ~ 0, TRUE ~ L), 
+         XL = case_when(is.na(XL) ~ 0, TRUE ~ XL)) |> 
+  mutate(quake_total = S+M+L+XL) |>
+  mutate(quake_density = quake_total / as.numeric(st_area(geometry))) |> 
+  mutate(quake_mlxl_total = M+L+XL) |>
+  mutate(quake_mlxl_density = quake_mlxl_total / as.numeric(st_area(geometry) / 10^6)) |> 
+  left_join(faults_within_province |> st_drop_geometry()) |> 
+  arrange(province)
+
+```
+
+
+```{r}
+
+temp_df <- st_join(counties, quakes_land, st_contains) |>
+  select(county_id,depth,mag,magfact) |>
+  na.omit() |>
+  st_drop_geometry() |>
+  group_by(county_id,magfact) |>
+  summarise(count=n()) |>
+  left_join(counties |> select(county_id,geometry), by="county_id") |>
+  st_as_sf() |>
+  pivot_wider(names_from = magfact,
+              values_from = count) 
+
+counties_df <- left_join(counties, temp_df |> st_drop_geometry(), by="county_id") |> 
+  mutate(S = case_when(is.na(S) ~ 0, TRUE ~ S), 
+         M = case_when(is.na(M) ~ 0, TRUE ~ M), 
+         L = case_when(is.na(L) ~ 0, TRUE ~ L), 
+         XL = case_when(is.na(XL) ~ 0, TRUE ~ XL)) |> 
+  mutate(quake_total = S+M+L+XL) |>
+  mutate(quake_density = quake_total / as.numeric(st_area(geometry))) |> 
+  mutate(quake_mlxl_total = M+L+XL) |>
+  mutate(quake_mlxl_density = quake_mlxl_total / as.numeric(st_area(geometry) / 10^6)) |> 
+  left_join(faults_within_county |> 
+              select(county_id,area_fault_within,area_county,fault_concentration) |> 
+              st_drop_geometry(), by="county_id") |> 
+  arrange(county)
+
+```
+
+# Save datasets
+
+```{r}
+
+# saveRDS(quakes_df, here("datasets","quakes_df.rds"))
+# saveRDS(provinces_df, here("datasets","provinces_df.rds"))
+# saveRDS(counties_df, here("datasets","counties_df.rds"))
+# saveRDS(faults_df, here("datasets","faults_df.rds"))
+# saveRDS(nearby_countries_df, here("datasets","nearby_countries_df.rds"))
+
+```

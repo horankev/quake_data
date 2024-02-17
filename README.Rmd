@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 The following datasets are contained within this repository:
 
 | dataset                 | summary                                                                                                                                                                                                   |
-|----------------------|--------------------------------------------------|
+|-----------------------|-------------------------------------------------|
 | **quakes_df**           | simple features dataframe containing 67,268 records for all earthquakes \>= 2.5 magnitude from 1 January 1985 to 31 December 2023, with epicentre within bounding box *xmin=92,xmax=143,ymin=-12,ymax=10* |
 | **provinces_df**        | simple features dataframe for 33 provinces of Indonesia with details of quakes whose epicentres lay within each zone                                                                                      |
 | **counties_df**         | simple features dataframe for 349 kabupaten/kota, here referred to as counties, of Indonesia with details of quakes whose epicentres lay within each zone                                                 |
@@ -31,7 +31,7 @@ The following datasets are contained within this repository:
 ### quakes_df
 
 | attribute        | type      | description                                                                                                                              |
-|------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------------|
+|-----------|-----------|--------------------------------------------------|
 | id               | character | individual id for each earthquake                                                                                                        |
 | ymd              | POSIXct   | year, month, day                                                                                                                         |
 | hms              | time      | hour, minute, second                                                                                                                     |
@@ -48,10 +48,12 @@ The following datasets are contained within this repository:
 | slip_type        | factor    | faulting type of closest faultline from faults_df dataframe                                                                              |
 | geometry         | sfc_POINT | points of earthquake epicentres                                                                                                          |
 
+Sourced from the [USGS eathquake catalogue API](https://earthquake.usgs.gov/earthquakes/search/). More detailed attribute descriptions available [here](https://earthquake.usgs.gov/data/comcat/index.php#1).
+
 ### provinces_df
 
 | attribute           | type         | description                                                                                                         |
-|------------------|------------------|-------------------------------------|
+|------------------|------------------|------------------------------------|
 | province            | factor       | names of 33 provinces: level-one administrative divisions (Indonesian: *provinsi*)                                  |
 | province_id         | numeric      | unique identifier for each province                                                                                 |
 | S                   | numeric      | total "small" earthquake count with epicentre within province where magnitude is in the range 2.5 - 5.4             |
@@ -70,7 +72,7 @@ The following datasets are contained within this repository:
 ### counties_df
 
 | attribute           | type         | description                                                                                                                              |
-|------------------|------------------|-------------------------------------|
+|------------------|------------------|------------------------------------|
 | county              | factor       | names of 387 regencies/cities (Indonesian: *kabupaten/kota*): level-two administrative divisions, referred to as counties for simplicity |
 | county_id           | numeric      | unique identifier for each county                                                                                                        |
 | province            | factor       | names of 33 provinces: level-one administrative divisions (Indonesian: *provinsi*)                                                       |

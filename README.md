@@ -35,6 +35,11 @@ The following datasets are contained within this repository:
 | slip_type        | factor    | faulting type of closest faultline from faults_df dataframe                                                                              |
 | geometry         | sfc_POINT | points of earthquake epicentres                                                                                                          |
 
+Sourced from the [USGS eathquake catalogue
+API](https://earthquake.usgs.gov/earthquakes/search/). More detailed
+attribute descriptions available
+[here](https://earthquake.usgs.gov/data/comcat/index.php#1).
+
 ### provinces_df
 
 | attribute           | type         | description                                                                                                         |
