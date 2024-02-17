@@ -230,9 +230,9 @@ incidence (or density per square kilometre)
 
 #### density maps
 
-Including all earthquakes, both undersea and under land, Their counts
-can be represented as density plots. When faceted by magnitude, we get
-the following:
+If we include all earthquakes, both undersea and beneath Indonesia’s
+land mass, their counts can be represented as density plots. When
+faceted by magnitude, we get the following:
 
 ![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
