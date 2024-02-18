@@ -18,15 +18,15 @@ These datasets contain spatio-temporal information about earthquakes in Indonesi
 
 ## Summary
 
-The following datasets are contained within this repository:
+The organisation of the datasets can be summarised as follows:
 
 | dataset                 | summary                                                                                                                                                                                                   |
 |-----------------------|-------------------------------------------------|
 | **quakes_df**           | simple features dataframe containing 67,268 records for all earthquakes \>= 2.5 magnitude from 1 January 1985 to 31 December 2023, with epicentre within bounding box *xmin=92,xmax=143,ymin=-12,ymax=10* |
 | **provinces_df**        | simple features dataframe for 33 provinces of Indonesia with details of quakes whose epicentres lay within each zone                                                                                      |
-| **counties_df**         | simple features dataframe for 349 kabupaten/kota, here referred to as counties, of Indonesia with details of quakes whose epicentres lay within each zone                                                 |
-| **faults_df**           | simple features dataframe for faultlines which lie within bounding box *xmin=92,xmax=143,ymin=-12,ymax=10* or 300km from Indonesia                                                                        |
-| **nearby_countries_df** | simple features dataframe of other countries which lie within the same bounding box                                                                                                                       |
+| **counties_df**         | simple features dataframe for 387 kabupaten/kota, here referred to as counties, of Indonesia with details of quakes whose epicentres lay within each zone                                                 |
+| **faults_df**           | simple features dataframe for faultlines which lie within bounding box *xmin=92,xmax=143,ymin=-12,ymax=10*                                                                        |
+| **nearby_countries_df** | simple features dataframe of 5 other countries which lie within the same bounding box                                                                                                                       |
 
 ## Descripton of datasets
 
@@ -135,12 +135,9 @@ The code for the assembly of these datasets is available in the file **codeprep.
 packages <- c(
   "tidyverse",
   "sf",
-  "mgcv",
   "ggpubr",
-  "sfdep",
   "here",
   "rnaturalearth",
-  "sfislands",
   "ggspatial",
   "rmapshaper"
 )
