@@ -47,7 +47,7 @@ The organisation of the datasets can be summarised as follows:
 | slip_type        | factor    | faulting type of closest faultline from faults_df dataframe                                                                              |
 | geometry         | sfc_POINT | points of earthquake epicentres                                                                                                          |
 
-Sourced from the [USGS eathquake catalogue
+Sourced from the [USGS earthquake catalogue
 API](https://earthquake.usgs.gov/earthquakes/search/). More detailed
 attribute descriptions available
 [here](https://earthquake.usgs.gov/data/comcat/index.php#1).
