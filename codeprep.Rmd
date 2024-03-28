@@ -136,7 +136,7 @@ quakes <- rbind(quakes_1985_1992,quakes_1993_1999,quakes_2000_2007,quakes_2008_2
   data.frame() |>
   st_as_sf() |> 
   mutate(magfact = cut(mag,
-                   breaks = c(2.5, 5.4, 6.1, 7, 11),
+                   breaks = c(2.5, 5.4, 6, 6.9, 11),
                    labels = c("S","M","L","XL")), labels=TRUE) |> 
   st_set_crs("WGS84") |> 
   st_crop(xmin=92,xmax=143,ymin=-12,ymax=10) |>

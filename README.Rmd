@@ -59,13 +59,13 @@ Sourced from the [USGS earthquake catalogue API](https://earthquake.usgs.gov/ear
 | province            | factor       | names of 33 provinces: level-one administrative divisions (Indonesian: *provinsi*)                                  |
 | province_id         | numeric      | unique identifier for each province                                                                                 |
 | S                   | numeric      | total "small" earthquake count with epicentre within province where magnitude is in the range 2.5 - 5.4             |
-| M                   | numeric      | total "medium" earthquake count with epicentre within province where magnitude is in the range 5.4 - 6.1            |
-| L                   | numeric      | total "major" earthquake count with epicentre within province where magnitude is in the range 6.1 - 7               |
+| M                   | numeric      | total "medium" earthquake count with epicentre within province where magnitude is in the range 5.5 - 6.0            |
+| L                   | numeric      | total "major" earthquake count with epicentre within province where magnitude is in the range 6.1 - 6.9               |
 | XL                  | numeric      | total "great" earthquake count with epicentre within province where magnitude is 7 or greater                       |
 | quake_total         | numeric      | sum of earthquake count with epicentre within province                                                              |
 | quake_density       | numeric      | density of quakes with epicentre within province (total per kilometre squared)                                      |
-| quake_mlxl_total    | numeric      | sum of earthquake count with epicentre within province and magnitude 5.4 or greater                                 |
-| quake_mlxl_density  | numeric      | density of quakes with epicentre within province and magnitude 5.4 or greater (total per kilometre squared)         |
+| quake_mlxl_total    | numeric      | sum of earthquake count with epicentre within province and magnitude 5.5 or greater                                 |
+| quake_mlxl_density  | numeric      | density of quakes with epicentre within province and magnitude 5.5 or greater (total per kilometre squared)         |
 | area_fault_within   | numeric      | area of faultline within province in kilometres squared (where faultline becomes two-dimensional via a 10km buffer) |
 | area_province       | numeric      | area of province in kilometres squared                                                                              |
 | fault_concentration | numeric      | area of faultlines within province per square kilometre                                                             |
